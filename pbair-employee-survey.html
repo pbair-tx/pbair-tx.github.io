@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PBAIR — Workplace Experience Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --dark: #111214;
+    --panel: #16181c;
+    --border: #2a2d33;
+    --accent: #f0a500;
+    --accent2: #e05c00;
+    --text: #e8e8e8;
+    --muted: #8b919c;
+    --input-bg: #1c1f25;
+    --green: #4ade80;
+  }
+
+  body { background: var(--black); color: var(--text); font-family: 'Barlow', sans-serif; font-weight: 300; min-height: 100vh; }
+
+  .header { background: var(--dark); border-bottom: 1px solid var(--border); padding: 24px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.5rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .logo span { color: var(--accent); }
+  .logo-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+  .doc-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); padding: 6px 14px; border-radius: 2px; }
+
+  .hero { background: linear-gradient(135deg, #1f1500 0%, #0f0d0a 55%, #0a0a0a 100%); border-bottom: 1px solid var(--border); padding: 48px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 480px; height: 480px; background: radial-gradient(circle, rgba(240,165,0,0.18) 0%, transparent 70%); pointer-events: none; }
+  .hero::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(224,92,0,0.10) 0%, transparent 70%); pointer-events: none; }
+  .hero-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.8rem); text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.1; margin-bottom: 16px; }
+
+  .anon-badge { display: inline-flex; align-items: flex-start; gap: 12px; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.25); border-radius: 2px; padding: 14px 18px; margin-bottom: 16px; max-width: 580px; }
+  .anon-icon { font-size: 1rem; margin-top: 1px; flex-shrink: 0; }
+  .anon-text { font-size: 0.85rem; color: var(--green); line-height: 1.6; }
+  .anon-text strong { font-weight: 600; display: block; margin-bottom: 3px; }
+
+  .hero-sub { font-size: 0.88rem; color: var(--text); max-width: 560px; line-height: 1.7; }
+
+  .progress-bar { background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 48px; display: flex; }
+  .progress-step { flex: 1; padding: 14px 0; font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .progress-step.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .progress-step.complete { color: var(--green); border-bottom-color: var(--green); }
+
+  .main { max-width: 760px; margin: 0 auto; padding: 48px 48px 120px; }
+
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .q-block { margin-bottom: 40px; }
+  .q-number { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .q-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--text); margin-bottom: 6px; line-height: 1.2; }
+  .q-sub { font-size: 0.85rem; color: var(--text); line-height: 1.55; margin-bottom: 14px; }
+
+  textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 3px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 0.92rem; font-weight: 400; padding: 14px 16px; outline: none; resize: vertical; min-height: 110px; line-height: 1.65; transition: border-color 0.2s; }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: #3d4147; font-size: 0.88rem; }
+  textarea.tall { min-height: 140px; }
+  textarea.short { min-height: 75px; }
+
+  .option-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  .option-pill { position: relative; }
+  .option-pill input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .option-pill label { display: block; padding: 8px 16px; border: 1px solid var(--border); border-radius: 2px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); cursor: pointer; transition: all 0.15s; margin: 0; }
+  .option-pill input:checked + label { border-color: var(--accent); color: var(--accent); background: rgba(240,165,0,0.06); }
+  .option-pill label:hover { border-color: var(--accent); }
+
+  .scale-wrap { margin-top: 4px; }
+  .scale-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .scale-labels span { font-size: 0.75rem; color: var(--text); }
+  .scale-row { display: flex; gap: 8px; }
+  .scale-opt { position: relative; flex: 1; }
+  .scale-opt input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .scale-opt label { display: block; text-align: center; padding: 10px 4px; border: 1px solid var(--border); border-radius: 2px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem; color: var(--text); cursor: pointer; transition: all 0.15s; margin: 0; }
+  .scale-opt input:checked + label { border-color: var(--accent); color: var(--accent); background: rgba(240,165,0,0.06); }
+
+  .callout-anon { background: rgba(74,222,128,0.05); border: 1px solid rgba(74,222,128,0.15); border-left: 3px solid var(--green); border-radius: 2px; padding: 14px 18px; margin-bottom: 32px; font-size: 0.84rem; color: var(--text); line-height: 1.6; }
+  .callout-anon strong { color: var(--green); font-weight: 500; }
+
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark); border-top: 1px solid var(--border); padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+  .btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 12px 28px; border-radius: 2px; border: none; cursor: pointer; transition: all 0.15s; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); color: var(--black); }
+  .btn-primary:hover { background: #f5b800; }
+  .btn-submit { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: var(--black); padding: 12px 36px; }
+  .nav-meta { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text); }
+
+  .success { display: none; text-align: center; padding: 80px 24px; }
+  .success.active { display: block; }
+  .success-icon { width: 64px; height: 64px; border: 2px solid var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 28px; font-size: 1.5rem; }
+  .success h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 2rem; text-transform: uppercase; margin-bottom: 12px; }
+  .success p { color: var(--text); font-size: 0.92rem; line-height: 1.7; max-width: 440px; margin: 0 auto; }
+
+  @media print {
+    .nav-bar, .progress-bar { display: none; }
+    .section { display: block !important; }
+    * { background: white !important; color: #111 !important; border-color: #ccc !important; }
+    .q-number, .logo span, .hero-eyebrow { color: #b45309 !important; }
+    .anon-badge { background: #f0fdf4 !important; border-color: #86efac !important; }
+    .anon-text, .anon-text strong { color: #16a34a !important; }
+    .callout-anon { border-left-color: #16a34a !important; background: #f0fdf4 !important; }
+    textarea { border: 1px solid #ccc !important; min-height: 60px !important; }
+    .hero { border-bottom: 2px solid #b45309 !important; padding: 24px 0 !important; }
+  }
+
+  @media (max-width: 640px) {
+    .header, .hero, .main, .nav-bar, .progress-bar { padding-left: 24px; padding-right: 24px; }
+    .progress-step { font-size: 0.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div>
+    <div class="logo">PB<span>AI</span>R</div>
+    <div class="logo-tag">Permian Basin AI Research</div>
+  </div>
+  <div class="doc-label">Workplace Experience Survey</div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">PBAIR — Employee Survey — Confidential</div>
+  <h1>Your Experience.<br>Your Words.</h1>
+
+  <div class="anon-badge">
+    <div class="anon-icon">🔒</div>
+    <div class="anon-text">
+      <strong>This survey is completely anonymous.</strong>
+      Your name is never collected. Your responses cannot be traced back to you. Individual answers are never shared with your employer — only summarized patterns from across all responses are used. This is regional research, not a company review.
+    </div>
+  </div>
+
+  <p class="hero-sub">We're asking the questions nobody usually asks. Be honest — that's the only way this is useful to anyone, including you.</p>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-step active" id="ps1">Your Role</div>
+  <div class="progress-step" id="ps2">Your Day</div>
+  <div class="progress-step" id="ps3">What's Broken</div>
+  <div class="progress-step" id="ps4">The Real Talk</div>
+</div>
+
+<div class="main">
+
+  <!-- PART 1 -->
+  <div class="section active" id="step-1">
+
+    <div class="callout-anon">
+      <strong>No names. No identification.</strong> We ask about your general role and tenure only so we can understand which parts of the business different friction points come from. Nothing here can identify you.
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 01</div>
+      <div class="q-text">What best describes your role?</div>
+      <div class="q-sub">Pick the closest match — exact title doesn't matter.</div>
+      <div class="option-group">
+        <div class="option-pill"><input type="radio" name="role" id="r1" value="Admin / Office"><label for="r1">Admin / Office</label></div>
+        <div class="option-pill"><input type="radio" name="role" id="r2" value="Field / Operations"><label for="r2">Field / Operations</label></div>
+        <div class="option-pill"><input type="radio" name="role" id="r3" value="Dispatch / Logistics"><label for="r3">Dispatch / Logistics</label></div>
+        <div class="option-pill"><input type="radio" name="role" id="r4" value="Sales / Customer Facing"><label for="r4">Sales / Customer Facing</label></div>
+        <div class="option-pill"><input type="radio" name="role" id="r5" value="Management / Supervisor"><label for="r5">Management / Supervisor</label></div>
+        <div class="option-pill"><input type="radio" name="role" id="r6" value="Other"><label for="r6">Other</label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 02</div>
+      <div class="q-text">How long have you been in this role?</div>
+      <div class="option-group">
+        <div class="option-pill"><input type="radio" name="tenure" id="t1" value="Less than 6 months"><label for="t1">Less than 6 months</label></div>
+        <div class="option-pill"><input type="radio" name="tenure" id="t2" value="6 months – 2 years"><label for="t2">6 months – 2 years</label></div>
+        <div class="option-pill"><input type="radio" name="tenure" id="t3" value="2 – 5 years"><label for="t3">2 – 5 years</label></div>
+        <div class="option-pill"><input type="radio" name="tenure" id="t4" value="5+ years"><label for="t4">5+ years</label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 03</div>
+      <div class="q-text">Do you personally use any AI tools — at work or on your own time?</div>
+      <div class="q-sub">No judgment either way. We want to understand how familiar people on the ground actually are with AI — not what the company policy says.</div>
+      <div class="option-group" style="margin-bottom:14px">
+        <div class="option-pill"><input type="radio" name="ai_emp" id="ae1" value="No — never used it"><label for="ae1">No — never used it</label></div>
+        <div class="option-pill"><input type="radio" name="ai_emp" id="ae2" value="I've tried it a couple times"><label for="ae2">I've tried it a couple times</label></div>
+        <div class="option-pill"><input type="radio" name="ai_emp" id="ae3" value="I use it occasionally"><label for="ae3">I use it occasionally</label></div>
+        <div class="option-pill"><input type="radio" name="ai_emp" id="ae4" value="I use it regularly"><label for="ae4">I use it regularly</label></div>
+      </div>
+      <textarea name="q3_ai_detail" class="short" placeholder="If you use it — what for? Work stuff, personal stuff, both? (optional)"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 04</div>
+      <div class="q-text">What tools, systems, or software do you actually use in your day-to-day work?</div>
+      <div class="q-sub">Whatever you actually open or touch during a normal shift — apps, spreadsheets, software, anything. Include things that feel old or outdated.</div>
+      <textarea name="q4_tool_stack" class="short" placeholder="Example: Excel for tracking, a dispatch app on my phone, paper forms for job documentation, group text for communicating with the crew, a software called X that nobody really uses anymore..."></textarea>
+    </div>
+  </div>
+
+  <!-- PART 2 -->
+  <div class="section" id="step-2">
+
+    <div class="callout-anon">
+      <strong>Still completely anonymous.</strong> Describe your day honestly — not the version you'd give in a review. The more specific, the more useful this research becomes.
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 05</div>
+      <div class="q-text">Walk me through a typical day at work — and as you do, flag what eats the most time.</div>
+      <div class="q-sub">Not the official version — the real one. What do you actually spend most of your time doing, and what takes longer than it should?</div>
+      <textarea name="q5_typical_day" class="tall" placeholder="Example: I get in and check emails for about 45 minutes. Then I'm usually re-entering stuff from the field into the system because it doesn't sync automatically — that takes another hour or so. The rest of the morning is phone calls. Afternoons are mostly paperwork. The re-entry is the thing that kills me every day..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 06</div>
+      <div class="q-text">Where in your day does something most often get lost, delayed, or have to be chased down — and who is usually involved in that breakdown?</div>
+      <div class="q-sub">Think about moments when information moves between people or between the field and the office. Where does it go wrong?</div>
+      <textarea name="q6_handoff_breakdowns" placeholder="Example: When field crews finish a job they're supposed to call in their hours but half the time they forget or give incomplete info. Then I have to track them down the next morning before I can close out the job, which delays everything else..."></textarea>
+    </div>
+  </div>
+
+  <!-- PART 3 -->
+  <div class="section" id="step-3">
+
+    <div class="q-block">
+      <div class="q-number">Question 07</div>
+      <div class="q-text">What's the most frustrating part of your job that you think could be fixed — but hasn't been? And how long has it been that way?</div>
+      <div class="q-sub">This is the important one. Be specific. The more detail the better.</div>
+      <textarea name="q7_frustration_duration" class="tall" placeholder="Example: We have to enter the same job information in three different places every single time. Everyone knows it's inefficient but nothing ever changes. It probably wastes two hours a day across the team. This has been going on for at least three years..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 08</div>
+      <div class="q-text">Is there something you do manually every day or week that feels like it should just handle itself automatically?</div>
+      <div class="q-sub">Copying and pasting. Filling out the same form again. Making the same phone call. Re-entering data. Whatever it is.</div>
+      <textarea name="q8_manual_tasks" placeholder="Example: Every Monday I manually compile a report from three spreadsheets that could 100% be automated. I've mentioned it but nobody has prioritized fixing it..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 09</div>
+      <div class="q-text">How much time per week do you think is genuinely wasted on tasks that shouldn't require a human?</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Almost none</span><span>Half my week</span></div>
+        <div class="scale-row">
+          <div class="scale-opt"><input type="radio" name="waste" id="w1" value="1"><label for="w1">1</label></div>
+          <div class="scale-opt"><input type="radio" name="waste" id="w2" value="2"><label for="w2">2</label></div>
+          <div class="scale-opt"><input type="radio" name="waste" id="w3" value="3"><label for="w3">3</label></div>
+          <div class="scale-opt"><input type="radio" name="waste" id="w4" value="4"><label for="w4">4</label></div>
+          <div class="scale-opt"><input type="radio" name="waste" id="w5" value="5"><label for="w5">5</label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PART 4 -->
+  <div class="section" id="step-4">
+
+    <div class="callout-anon">
+      <strong>This section is the most valuable — and still completely anonymous.</strong> These are the questions that rarely get asked out loud. Your responses go nowhere with your name attached. Ever. Say what you actually think.
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 10</div>
+      <div class="q-text">Is there a process or system that leadership thinks is working fine — but on the ground level, it's actually a mess?</div>
+      <div class="q-sub">You don't need to name anyone. Just describe the situation honestly.</div>
+      <textarea name="q10_gap_signal" class="tall" placeholder="Example: The scheduling system looks clean from the top but on our end it's constantly out of date and nobody trusts what's in it, so we end up calling around to double-check everything anyway. Leadership thinks it's being used properly but most of us have stopped relying on it..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 11</div>
+      <div class="q-text">If you could change one thing about how work gets done here — and nobody could push back on it — what would it be?</div>
+      <div class="q-sub">Process, tool, workflow, communication, anything. What would actually make your job better?</div>
+      <textarea name="q11_change_one_thing" placeholder="Example: I would make it so field crews could submit their reports from their phones instead of calling them in. Half the time the information gets lost or written down wrong and then I have to chase it down..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 12</div>
+      <div class="q-text">Anything else you want to say that nobody has ever actually asked you about your job?</div>
+      <div class="q-sub">Open floor. This is your space. No filter needed.</div>
+      <textarea name="q12_open_floor" placeholder="Say whatever didn't fit anywhere else."></textarea>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="success">
+    <div class="success-icon">✓</div>
+    <h2>Thank You.</h2>
+    <p>Your responses have been recorded anonymously. They will be compiled into summarized patterns and used to understand where workflow friction exists across Permian Basin businesses — without ever identifying you individually.</p>
+  </div>
+
+</div>
+
+<div class="nav-bar" id="nav-bar">
+  <button class="btn btn-ghost" id="btn-back" onclick="prevStep()" style="visibility:hidden">← Back</button>
+  <div class="nav-meta" id="nav-meta">Part 1 of 4</div>
+  <button class="btn btn-primary" id="btn-next" onclick="nextStep()">Next →</button>
+</div>
+
+<script>
+  let current = 1;
+  const total = 4;
+  const steps = ['ps1','ps2','ps3','ps4'];
+  const WEBHOOK_URL = 'https://ashlaraspera.app.n8n.cloud/webhook/pbair-survey-submit';
+
+  function nextStep() {
+    if (current < total) {
+      document.getElementById('step-' + current).classList.remove('active');
+      document.getElementById(steps[current-1]).classList.remove('active');
+      document.getElementById(steps[current-1]).classList.add('complete');
+      current++;
+      document.getElementById('step-' + current).classList.add('active');
+      document.getElementById(steps[current-1]).classList.add('active');
+      updateNav();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else { submitForm(); }
+  }
+
+  function prevStep() {
+    if (current > 1) {
+      document.getElementById('step-' + current).classList.remove('active');
+      document.getElementById(steps[current-1]).classList.remove('active');
+      current--;
+      document.getElementById(steps[current-1]).classList.remove('complete');
+      document.getElementById(steps[current-1]).classList.add('active');
+      document.getElementById('step-' + current).classList.add('active');
+      updateNav();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function updateNav() {
+    document.getElementById('btn-back').style.visibility = current > 1 ? 'visible' : 'hidden';
+    document.getElementById('nav-meta').textContent = 'Part ' + current + ' of ' + total;
+    const btn = document.getElementById('btn-next');
+    if (current === total) { btn.textContent = 'Submit →'; btn.className = 'btn btn-submit'; }
+    else { btn.textContent = 'Next →'; btn.className = 'btn btn-primary'; }
+  }
+
+  function getVal(name) {
+    const el = document.querySelector('[name="' + name + '"]');
+    if (!el) return '';
+    return el.value || '';
+  }
+
+  function getRadio(name) {
+    const checked = document.querySelector('input[name="' + name + '"]:checked');
+    return checked ? checked.value : '';
+  }
+
+  function collectAnswers() {
+    return {
+      survey_type: 'employee',
+      response_id: 'pbair_emp_' + Date.now(),
+      submitted_at: new Date().toISOString(),
+      company_name: 'Anonymous / Not Captured',
+      respondent_label: 'Anonymous Employee',
+      answers: {
+        q1_role: getRadio('role'),
+        q2_tenure: getRadio('tenure'),
+        q3_ai_familiarity: getRadio('ai_emp'),
+        q3_ai_detail: getVal('q3_ai_detail'),
+        q4_tool_stack: getVal('q4_tool_stack'),
+        q5_typical_day: getVal('q5_typical_day'),
+        q6_handoff_breakdowns: getVal('q6_handoff_breakdowns'),
+        q7_frustration_duration: getVal('q7_frustration_duration'),
+        q8_manual_tasks: getVal('q8_manual_tasks'),
+        q9_waste_scale: getRadio('waste'),
+        q10_gap_signal: getVal('q10_gap_signal'),
+        q11_change_one_thing: getVal('q11_change_one_thing'),
+        q12_open_floor: getVal('q12_open_floor')
+      }
+    };
+  }
+
+  async function submitForm() {
+    const btn = document.getElementById('btn-next');
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    const payload = collectAnswers();
+
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch(e) {
+      console.log('Submission note:', e);
+    }
+
+    document.getElementById('step-' + current).classList.remove('active');
+    steps.forEach(id => {
+      document.getElementById(id).classList.remove('active');
+      document.getElementById(id).classList.add('complete');
+    });
+    document.getElementById('success').classList.add('active');
+    document.getElementById('nav-bar').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PBAIR — Business Operations Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0a0a0a;
+    --dark: #111214;
+    --panel: #16181c;
+    --border: #2a2d33;
+    --accent: #f0a500;
+    --accent2: #e05c00;
+    --text: #e8e8e8;
+    --muted: #8b919c;
+    --input-bg: #1c1f25;
+  }
+
+  body { background: var(--black); color: var(--text); font-family: 'Barlow', sans-serif; font-weight: 300; min-height: 100vh; }
+
+  .header { background: var(--dark); border-bottom: 1px solid var(--border); padding: 24px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.5rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .logo span { color: var(--accent); }
+  .logo-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+  .doc-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); padding: 6px 14px; border-radius: 2px; }
+
+  .hero { background: linear-gradient(135deg, #1f1500 0%, #0f0d0a 55%, #0a0a0a 100%); border-bottom: 1px solid var(--border); padding: 48px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 480px; height: 480px; background: radial-gradient(circle, rgba(240,165,0,0.18) 0%, transparent 70%); pointer-events: none; }
+  .hero::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(224,92,0,0.10) 0%, transparent 70%); pointer-events: none; }
+  .hero-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .hero h1 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.8rem); text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.1; margin-bottom: 16px; }
+  .hero-sub { font-size: 0.9rem; color: var(--text); max-width: 580px; line-height: 1.75; }
+
+  .context-bar { background: var(--panel); border-bottom: 1px solid var(--border); padding: 16px 48px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+  .context-item { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .context-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+  .progress-bar { background: var(--panel); border-bottom: 1px solid var(--border); padding: 0 48px; display: flex; }
+  .progress-step { flex: 1; padding: 14px 0; font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .progress-step.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .progress-step.complete { color: #4ade80; border-bottom-color: #4ade80; }
+
+  .main { max-width: 780px; margin: 0 auto; padding: 48px 48px 120px; }
+
+  .section { display: none; animation: fadeIn 0.3s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-header { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .section-number { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .section-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.6rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--text); margin-bottom: 6px; }
+  .section-desc { font-size: 0.88rem; color: var(--text); line-height: 1.6; }
+
+  .q-block { margin-bottom: 36px; }
+  .q-number { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .q-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.02em; color: var(--text); margin-bottom: 6px; line-height: 1.25; }
+  .q-sub { font-size: 0.84rem; color: var(--text); line-height: 1.55; margin-bottom: 14px; }
+
+  textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 3px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 0.92rem; font-weight: 400; padding: 14px 16px; outline: none; resize: vertical; min-height: 110px; line-height: 1.65; transition: border-color 0.2s; }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: #3d4147; font-size: 0.88rem; }
+  textarea.tall { min-height: 140px; }
+  textarea.short { min-height: 75px; }
+
+  input[type="text"] { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 3px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 0.92rem; padding: 12px 16px; outline: none; transition: border-color 0.2s; }
+  input[type="text"]:focus { border-color: var(--accent); }
+  input[type="text"]::placeholder { color: #3d4147; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field-group { margin-bottom: 4px; }
+  .field-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text); margin-bottom: 8px; display: block; }
+
+  .option-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  .option-pill { position: relative; }
+  .option-pill input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .option-pill label { display: block; padding: 8px 16px; border: 1px solid var(--border); border-radius: 2px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); cursor: pointer; transition: all 0.15s; margin: 0; }
+  .option-pill input:checked + label { border-color: var(--accent); color: var(--accent); background: rgba(240,165,0,0.06); }
+  .option-pill label:hover { border-color: var(--accent); }
+
+  .scale-wrap { margin-top: 4px; }
+  .scale-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .scale-labels span { font-size: 0.75rem; color: var(--text); }
+  .scale-row { display: flex; gap: 8px; }
+  .scale-opt { position: relative; flex: 1; }
+  .scale-opt input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .scale-opt label { display: block; text-align: center; padding: 10px 4px; border: 1px solid var(--border); border-radius: 2px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem; color: var(--text); cursor: pointer; transition: all 0.15s; margin: 0; }
+  .scale-opt input:checked + label { border-color: var(--accent); color: var(--accent); background: rgba(240,165,0,0.06); }
+
+  .callout { background: rgba(240,165,0,0.05); border: 1px solid rgba(240,165,0,0.2); border-left: 3px solid var(--accent); border-radius: 2px; padding: 14px 18px; margin-bottom: 28px; font-size: 0.86rem; color: var(--text); line-height: 1.65; }
+  .callout strong { color: var(--accent); font-weight: 500; }
+
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark); border-top: 1px solid var(--border); padding: 20px 48px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+  .btn { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 12px 28px; border-radius: 2px; border: none; cursor: pointer; transition: all 0.15s; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); color: var(--black); }
+  .btn-primary:hover { background: #f5b800; }
+  .btn-submit { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: var(--black); padding: 12px 36px; }
+  .nav-meta { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text); }
+
+  .success { display: none; text-align: center; padding: 80px 24px; }
+  .success.active { display: block; }
+  .success-icon { width: 64px; height: 64px; border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 28px; font-size: 1.5rem; }
+  .success h2 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 2rem; text-transform: uppercase; margin-bottom: 12px; }
+  .success p { color: var(--text); font-size: 0.92rem; line-height: 1.7; max-width: 460px; margin: 0 auto 8px; }
+  .success-note { font-size: 0.82rem; color: var(--muted); margin-top: 16px; }
+
+  @media print {
+    .nav-bar, .progress-bar, .context-bar { display: none; }
+    .section { display: block !important; }
+    * { background: white !important; color: #111 !important; border-color: #ccc !important; }
+    .q-number, .section-number, .logo span, .hero-eyebrow, .callout strong { color: #b45309 !important; }
+    .callout { border-left-color: #b45309 !important; background: #fffbeb !important; }
+    textarea, input[type="text"] { border: 1px solid #ccc !important; min-height: 60px !important; }
+    .hero { border-bottom: 2px solid #b45309 !important; padding: 24px 0 !important; }
+  }
+
+  @media (max-width: 640px) {
+    .header, .hero, .main, .nav-bar, .progress-bar, .context-bar { padding-left: 24px; padding-right: 24px; }
+    .field-row { grid-template-columns: 1fr; }
+    .progress-step { font-size: 0.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div>
+    <div class="logo">PB<span>AI</span>R</div>
+    <div class="logo-tag">Permian Basin AI Research</div>
+  </div>
+  <div class="doc-label">Business Operations Survey</div>
+</header>
+
+<div class="hero">
+  <div class="hero-eyebrow">Permian Basin AI Research — Operations Study</div>
+  <h1>How Does Your<br>Operation Actually Run?</h1>
+  <p class="hero-sub">Permian Basin AI Research is conducting a regional study to understand where workflow friction exists across local businesses — and whether AI could realistically address it. We want to know what's actually happening on the ground in operations like yours.<br><br>No pitch. No obligation. Just honest questions about how work gets done.</p>
+</div>
+
+<div class="context-bar">
+  <div class="context-item"><div class="context-dot"></div>Takes about 8 minutes</div>
+  <div class="context-item"><div class="context-dot"></div>No sales follow-up without your permission</div>
+  <div class="context-item"><div class="context-dot"></div>Responses inform regional research only</div>
+</div>
+
+<div class="progress-bar">
+  <div class="progress-step active" id="ps1">Your Business</div>
+  <div class="progress-step" id="ps2">How Work Gets Done</div>
+  <div class="progress-step" id="ps3">Where It Breaks Down</div>
+  <div class="progress-step" id="ps4">Bigger Picture</div>
+</div>
+
+<div class="main">
+
+  <!-- PART 1 -->
+  <div class="section active" id="step-1">
+    <div class="section-header">
+      <div class="section-number">Part 01 of 04</div>
+      <div class="section-title">Your Business</div>
+      <div class="section-desc">Basic context so we understand how your operation is structured. This information stays with the research — it is never used for sales outreach without your explicit permission.</div>
+    </div>
+
+    <div class="q-block">
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label">Business Name</label>
+          <input type="text" name="business_name" placeholder="Company name">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Your Name & Role</label>
+          <input type="text" name="name_role" placeholder="Name, Owner / Ops Manager / etc.">
+        </div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 01</div>
+      <div class="q-text">What does your business do and how does the work actually flow day to day?</div>
+      <div class="q-sub">Plain language is fine. What's the actual work, who does it, and how does it move from start to finish?</div>
+      <textarea name="q1_business_flow" class="short" placeholder="Example: We provide oilfield safety services — H2S monitoring and site compliance for operators in the Permian Basin. We dispatch field techs daily, they check in on site, and report back to us at end of shift. We compile those reports and invoice weekly."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 02</div>
+      <div class="q-text">How big is your operation?</div>
+      <div class="option-group">
+        <div class="option-pill"><input type="radio" name="size" id="s1" value="Just me"><label for="s1">Just me</label></div>
+        <div class="option-pill"><input type="radio" name="size" id="s2" value="2–10 employees"><label for="s2">2–10 employees</label></div>
+        <div class="option-pill"><input type="radio" name="size" id="s3" value="11–50 employees"><label for="s3">11–50 employees</label></div>
+        <div class="option-pill"><input type="radio" name="size" id="s4" value="50+ employees"><label for="s4">50+ employees</label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 03</div>
+      <div class="q-text">How would you describe your current use of technology in daily operations?</div>
+      <div class="option-group">
+        <div class="option-pill"><input type="radio" name="tech" id="t1" value="Mostly paper & phone calls"><label for="t1">Mostly paper & phone calls</label></div>
+        <div class="option-pill"><input type="radio" name="tech" id="t2" value="Spreadsheets & basic software"><label for="t2">Spreadsheets & basic software</label></div>
+        <div class="option-pill"><input type="radio" name="tech" id="t3" value="Several software tools"><label for="t3">Several software tools</label></div>
+        <div class="option-pill"><input type="radio" name="tech" id="t4" value="Pretty well connected"><label for="t4">Pretty well connected</label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 04</div>
+      <div class="q-text">Does your business currently use AI in any capacity — and if you've tried it before and it didn't stick, what happened?</div>
+      <div class="q-sub">No wrong answer. We want to understand where businesses in this area actually are with AI, not where they think they should be.</div>
+      <div class="option-group" style="margin-bottom:14px">
+        <div class="option-pill"><input type="radio" name="ai_use" id="ai1" value="No — not at all"><label for="ai1">No — not at all</label></div>
+        <div class="option-pill"><input type="radio" name="ai_use" id="ai2" value="Occasionally — ChatGPT or similar"><label for="ai2">Occasionally — ChatGPT or similar</label></div>
+        <div class="option-pill"><input type="radio" name="ai_use" id="ai3" value="Yes — a few specific tools"><label for="ai3">Yes — a few specific tools</label></div>
+        <div class="option-pill"><input type="radio" name="ai_use" id="ai4" value="Yes — integrated into operations"><label for="ai4">Yes — integrated into operations</label></div>
+        <div class="option-pill"><input type="radio" name="ai_use" id="ai5" value="We tried it — didn't stick"><label for="ai5">We tried it — didn't stick</label></div>
+      </div>
+      <textarea name="q4_ai_detail" class="short" placeholder="If yes or tried it — what are you using it for, or what didn't work and why? (optional but helpful)"></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 05</div>
+      <div class="q-text">As our research develops, patterns will emerge across similar businesses in your sector. Would you like us to reach out when findings relevant to your industry are available?</div>
+      <div class="q-sub">No obligation. This is research — not a sales follow-up. A yes just means we can share what we find.</div>
+      <div class="option-group" style="margin-bottom:14px">
+        <div class="option-pill"><input type="radio" name="followup" id="f1" value="Yes — reach out when patterns emerge"><label for="f1">Yes — reach out when patterns emerge</label></div>
+        <div class="option-pill"><input type="radio" name="followup" id="f2" value="Maybe — depends what you find"><label for="f2">Maybe — depends what you find</label></div>
+        <div class="option-pill"><input type="radio" name="followup" id="f3" value="No — research only"><label for="f3">No — research only</label></div>
+      </div>
+      <input type="text" name="followup_contact" placeholder="Best contact method if yes (phone, email, text)">
+    </div>
+  </div>
+
+  <!-- PART 2 -->
+  <div class="section" id="step-2">
+    <div class="section-header">
+      <div class="section-number">Part 02 of 04</div>
+      <div class="section-title">How Work Gets Done</div>
+      <div class="section-desc">We want to understand your actual operational reality — not the org chart version. How does information move through your business on a typical day?</div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 06</div>
+      <div class="q-text">Walk us through a typical operational day — from the moment things start moving to the end of the day.</div>
+      <div class="q-sub">How does work get assigned, tracked, reported, and closed out? What tools or processes are involved at each step?</div>
+      <textarea name="q6_operational_day" class="tall" placeholder="Example: We dispatch crews early morning by phone. They check in when they're on site. At end of day they call in their report and our office person writes it up and enters it into the system. Invoicing happens at end of week based on those reports..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 07</div>
+      <div class="q-text">Who hands work off to whom during a typical day — and where does something most often get lost, delayed, or fall through the cracks in that handoff?</div>
+      <div class="q-sub">Think about the moments when information moves from one person to another, or from the field to the office. Where does it break down?</div>
+      <textarea name="q7_handoff_breakdowns" placeholder="Example: Field crews call in at end of shift but half the time the office doesn't get the call or writes it down wrong. By the time we catch the error the next morning the window for billing it correctly has passed..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 08</div>
+      <div class="q-text">Who puts your reports together, how long does it take them, and how often does it happen?</div>
+      <div class="q-sub">Internal reports, client reports, compliance reports — whatever reporting your operation produces regularly.</div>
+      <textarea name="q8_reporting" class="short" placeholder="Example: Our office manager spends about half a day every Friday pulling together the weekly client summary from three different spreadsheets. We also do a daily internal log that takes about an hour..."></textarea>
+    </div>
+  </div>
+
+  <!-- PART 3 -->
+  <div class="section" id="step-3">
+    <div class="section-header">
+      <div class="section-number">Part 03 of 04</div>
+      <div class="section-title">Where It Breaks Down</div>
+      <div class="section-desc">This is the section that matters most. Be direct — we're here to understand the operation, not judge it.</div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 09</div>
+      <div class="q-text">What's the single most time-consuming thing your operation does that feels like it shouldn't take as long as it does — and how often does it happen and roughly how long does it take each time?</div>
+      <div class="q-sub">The thing that eats hours every week that you've always assumed was just part of the job.</div>
+      <textarea name="q9_biggest_time_loss" class="tall" placeholder="Example: Compliance documentation. Every job requires the same paperwork filled out from scratch. We know what 90% of it will say before we start, but it still takes someone two hours per job. We run about 15 jobs a week — that's roughly 30 hours a week just in paperwork..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 10</div>
+      <div class="q-text">How long has that been the case?</div>
+      <div class="option-group">
+        <div class="option-pill"><input type="radio" name="duration" id="d1" value="Just started noticing"><label for="d1">Just started noticing</label></div>
+        <div class="option-pill"><input type="radio" name="duration" id="d2" value="6–12 months"><label for="d2">6–12 months</label></div>
+        <div class="option-pill"><input type="radio" name="duration" id="d3" value="1–3 years"><label for="d3">1–3 years</label></div>
+        <div class="option-pill"><input type="radio" name="duration" id="d4" value="Since we started"><label for="d4">Since we started</label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 11</div>
+      <div class="q-text">Where are you losing money that's hard to put a number on — and if you had to estimate what it costs the business monthly, what would you guess?</div>
+      <div class="q-sub">Missed follow-ups, jobs that slip through, billing errors, overtime caused by inefficiency — anything like that. A rough range is fine.</div>
+      <textarea name="q11_hidden_money_loss" placeholder="Example: We probably lose a job or two a month because nobody has time to follow up on quotes. If an average job is $3,000 that's maybe $5,000-6,000 a month walking out the door. We also have billing errors that probably cost another $1,000 a month in underbilling..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 12</div>
+      <div class="q-text">On a scale of 1–5, how much of your week do you think is spent on work that could realistically be handled by a system?</div>
+      <div class="scale-wrap">
+        <div class="scale-labels"><span>Very little</span><span>Significant amount</span></div>
+        <div class="scale-row">
+          <div class="scale-opt"><input type="radio" name="waste" id="w1" value="1"><label for="w1">1</label></div>
+          <div class="scale-opt"><input type="radio" name="waste" id="w2" value="2"><label for="w2">2</label></div>
+          <div class="scale-opt"><input type="radio" name="waste" id="w3" value="3"><label for="w3">3</label></div>
+          <div class="scale-opt"><input type="radio" name="waste" id="w4" value="4"><label for="w4">4</label></div>
+          <div class="scale-opt"><input type="radio" name="waste" id="w5" value="5"><label for="w5">5</label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PART 4 -->
+  <div class="section" id="step-4">
+    <div class="section-header">
+      <div class="section-number">Part 04 of 04</div>
+      <div class="section-title">The Bigger Picture</div>
+      <div class="section-desc">Last few questions. These help us understand how operational leaders in this area actually think about their work and where the real friction lives.</div>
+    </div>
+
+    <div class="callout">
+      <strong>Reminder:</strong> This is research. If anything you share surfaces a finding relevant to your industry, we'll reach out only if you indicated that's welcome — and only to share what we found, not to pitch anything.
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 13</div>
+      <div class="q-text">If you could see any single number about your operation updated in real time, what would it be?</div>
+      <div class="q-sub">Don't think about whether it's technically possible — just describe what you'd want to know at a glance.</div>
+      <textarea name="q13_real_time_metric" class="short" placeholder="Example: How many active jobs we have on site right now and which ones haven't checked in today. Or total billable hours logged versus yesterday at this time..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 14</div>
+      <div class="q-text">If you had a tool that could handle one operational headache automatically — what would it fix?</div>
+      <div class="q-sub">Don't worry about whether it's possible. Just describe the problem you'd most want gone.</div>
+      <textarea name="q14_desired_automation" class="tall" placeholder="Example: I'd want something that automatically generates our end-of-job compliance report from the information we already collect on site. Right now we collect all the data and then someone manually writes the same report every time with different numbers..."></textarea>
+    </div>
+
+    <div class="q-block">
+      <div class="q-number">Question 15</div>
+      <div class="q-text">Is there anything about your operation, your industry, or the Permian Basin business environment that would be important context for understanding how you work?</div>
+      <div class="q-sub">Regulatory requirements, seasonal patterns, workforce dynamics, anything that shapes the way your operation has to run.</div>
+      <textarea name="q15_industry_context" placeholder="Example: Our work is heavily regulated by state and federal safety requirements so any system would need to produce documentation that meets those standards. We also have significant turnover in field positions which makes training on new tools difficult..."></textarea>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="success">
+    <div class="success-icon">✓</div>
+    <h2>Thank You.</h2>
+    <p>Your responses have been recorded and will be reviewed as part of the PBAIR Permian Basin operations study. If you indicated you'd like to hear about industry patterns as they emerge, we'll be in touch — on your terms and only when we have something genuinely useful to share.</p>
+    <p class="success-note">Permian Basin AI Research &nbsp;·&nbsp; Midland, Texas</p>
+  </div>
+
+</div>
+
+<div class="nav-bar" id="nav-bar">
+  <button class="btn btn-ghost" id="btn-back" onclick="prevStep()" style="visibility:hidden">← Back</button>
+  <div class="nav-meta" id="nav-meta">Part 1 of 4</div>
+  <button class="btn btn-primary" id="btn-next" onclick="nextStep()">Next →</button>
+</div>
+
+<script>
+  let current = 1;
+  const total = 4;
+  const steps = ['ps1','ps2','ps3','ps4'];
+  const WEBHOOK_URL = 'https://ashlaraspera.app.n8n.cloud/webhook/pbair-survey-submit';
+
+  function nextStep() {
+    if (current < total) {
+      document.getElementById('step-' + current).classList.remove('active');
+      document.getElementById(steps[current-1]).classList.remove('active');
+      document.getElementById(steps[current-1]).classList.add('complete');
+      current++;
+      document.getElementById('step-' + current).classList.add('active');
+      document.getElementById(steps[current-1]).classList.add('active');
+      updateNav();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else { submitForm(); }
+  }
+
+  function prevStep() {
+    if (current > 1) {
+      document.getElementById('step-' + current).classList.remove('active');
+      document.getElementById(steps[current-1]).classList.remove('active');
+      current--;
+      document.getElementById(steps[current-1]).classList.remove('complete');
+      document.getElementById(steps[current-1]).classList.add('active');
+      document.getElementById('step-' + current).classList.add('active');
+      updateNav();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function updateNav() {
+    document.getElementById('btn-back').style.visibility = current > 1 ? 'visible' : 'hidden';
+    document.getElementById('nav-meta').textContent = 'Part ' + current + ' of ' + total;
+    const btn = document.getElementById('btn-next');
+    if (current === total) { btn.textContent = 'Submit →'; btn.className = 'btn btn-submit'; }
+    else { btn.textContent = 'Next →'; btn.className = 'btn btn-primary'; }
+  }
+
+  function getVal(name) {
+    const el = document.querySelector('[name="' + name + '"]');
+    if (!el) return '';
+    if (el.type === 'radio') {
+      const checked = document.querySelector('[name="' + name + '"]:checked');
+      return checked ? checked.value : '';
+    }
+    return el.value || '';
+  }
+
+  function getRadio(name) {
+    const checked = document.querySelector('input[name="' + name + '"]:checked');
+    return checked ? checked.value : '';
+  }
+
+  function collectAnswers() {
+    return {
+      survey_type: 'management',
+      response_id: 'pbair_mgmt_' + Date.now(),
+      submitted_at: new Date().toISOString(),
+      company_name: getVal('business_name'),
+      respondent_label: getVal('name_role'),
+      answers: {
+        business_name: getVal('business_name'),
+        name_role: getVal('name_role'),
+        q1_business_flow: getVal('q1_business_flow'),
+        q2_operation_size: getRadio('size'),
+        q3_technology_level: getRadio('tech'),
+        q4_ai_usage_level: getRadio('ai_use'),
+        q4_ai_usage_detail: getVal('q4_ai_detail'),
+        q5_followup_permission: getRadio('followup'),
+        q5_followup_contact: getVal('followup_contact'),
+        q6_operational_day: getVal('q6_operational_day'),
+        q7_handoff_breakdowns: getVal('q7_handoff_breakdowns'),
+        q8_reporting: getVal('q8_reporting'),
+        q9_biggest_time_loss: getVal('q9_biggest_time_loss'),
+        q10_duration: getRadio('duration'),
+        q11_hidden_money_loss: getVal('q11_hidden_money_loss'),
+        q12_systemizable_work: getRadio('waste'),
+        q13_real_time_metric: getVal('q13_real_time_metric'),
+        q14_desired_automation: getVal('q14_desired_automation'),
+        q15_industry_context: getVal('q15_industry_context')
+      }
+    };
+  }
+
+  async function submitForm() {
+    const btn = document.getElementById('btn-next');
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    const payload = collectAnswers();
+
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch(e) {
+      console.log('Submission note:', e);
+    }
+
+    document.getElementById('step-' + current).classList.remove('active');
+    steps.forEach(id => {
+      document.getElementById(id).classList.remove('active');
+      document.getElementById(id).classList.add('complete');
+    });
+    document.getElementById('success').classList.add('active');
+    document.getElementById('nav-bar').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
