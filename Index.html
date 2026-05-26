@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PBAIR — Permian Basin AI Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–black: #0a0a0a;
+–dark: #111214;
+–panel: #16181c;
+–border: #2a2d33;
+–accent: #f0a500;
+–accent2: #e05c00;
+–text: #e8e8e8;
+–muted: #8b919c;
+}
+
+body {
+background: var(–black);
+color: var(–text);
+font-family: ‘Barlow’, sans-serif;
+font-weight: 300;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+}
+
+/* NAV */
+nav {
+background: var(–dark);
+border-bottom: 1px solid var(–border);
+padding: 22px 48px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-shrink: 0;
+}
+
+.logo {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-weight: 900;
+font-size: 1.4rem;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+color: var(–text);
+}
+
+.logo span { color: var(–accent); }
+
+.logo-sub {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 0.6rem;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(–muted);
+margin-top: 2px;
+}
+
+.nav-contact {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 0.68rem;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(–muted);
+text-align: right;
+line-height: 1.7;
+}
+
+.nav-contact a {
+color: var(–muted);
+text-decoration: none;
+transition: color 0.15s;
+}
+
+.nav-contact a:hover { color: var(–accent); }
+
+/* MAIN */
+main {
+flex: 1;
+display: flex;
+flex-direction: column;
+justify-content: center;
+padding: 64px 48px;
+max-width: 700px;
+margin: 0 auto;
+width: 100%;
+}
+
+/* EYEBROW */
+.eyebrow {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 0.68rem;
+letter-spacing: 0.3em;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 28px;
+display: flex;
+align-items: center;
+gap: 12px;
+animation: fadeUp 0.6s ease both;
+}
+
+.eyebrow::before {
+content: ‘’;
+width: 24px;
+height: 1px;
+background: var(–accent);
+flex-shrink: 0;
+}
+
+/* CONTEXT */
+.context {
+margin-bottom: 40px;
+animation: fadeUp 0.6s ease 0.1s both;
+}
+
+.context p {
+font-size: 1rem;
+color: var(–text);
+line-height: 1.8;
+margin-bottom: 0;
+}
+
+.context .note {
+display: block;
+margin-top: 10px;
+font-size: 0.85rem;
+color: var(–muted);
+}
+
+/* DIVIDER */
+.divider {
+border: none;
+border-top: 1px solid var(–border);
+margin-bottom: 32px;
+animation: fadeUp 0.6s ease 0.15s both;
+}
+
+/* SURVEY CARDS */
+.survey-cards {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 14px;
+margin-bottom: 32px;
+animation: fadeUp 0.6s ease 0.2s both;
+}
+
+.survey-card {
+display: block;
+background: var(–panel);
+border: 1px solid var(–border);
+border-radius: 3px;
+padding: 22px;
+text-decoration: none;
+transition: all 0.2s ease;
+position: relative;
+overflow: hidden;
+}
+
+.survey-card::after {
+content: ‘’;
+position: absolute;
+bottom: 0; left: 0; right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(–accent), var(–accent2));
+transform: scaleX(0);
+transform-origin: left;
+transition: transform 0.25s ease;
+}
+
+.survey-card:hover {
+border-color: rgba(240,165,0,0.25);
+transform: translateY(-2px);
+}
+
+.survey-card:hover::after { transform: scaleX(1); }
+
+.card-label {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 0.6rem;
+letter-spacing: 0.22em;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 8px;
+}
+
+.card-title {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-weight: 700;
+font-size: 1.05rem;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+color: var(–text);
+margin-bottom: 8px;
+}
+
+.card-desc {
+font-size: 0.8rem;
+color: var(–muted);
+line-height: 1.6;
+margin-bottom: 18px;
+}
+
+.card-footer {
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.card-time {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 0.62rem;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+color: var(–muted);
+}
+
+.card-arrow {
+font-size: 0.85rem;
+color: var(–accent);
+transition: transform 0.2s ease;
+}
+
+.survey-card:hover .card-arrow { transform: translateX(4px); }
+
+/* CLOSING NOTE */
+.closing {
+font-size: 0.82rem;
+color: var(–muted);
+line-height: 1.7;
+padding-top: 24px;
+border-top: 1px solid var(–border);
+animation: fadeUp 0.6s ease 0.25s both;
+}
+
+/* FOOTER */
+footer {
+border-top: 1px solid var(–border);
+padding: 20px 48px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-shrink: 0;
+flex-wrap: wrap;
+gap: 12px;
+}
+
+.footer-brand {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-weight: 700;
+font-size: 0.85rem;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+color: var(–muted);
+}
+
+.footer-brand span { color: var(–accent); }
+
+.footer-contact {
+font-family: ‘Barlow Condensed’, sans-serif;
+font-size: 0.65rem;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(–muted);
+}
+
+.footer-contact a {
+color: var(–muted);
+text-decoration: none;
+}
+
+.footer-contact a:hover { color: var(–accent); }
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(12px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+nav { padding: 16px 24px; }
+.nav-contact { display: none; }
+main { padding: 48px 24px; justify-content: flex-start; padding-top: 56px; }
+.survey-cards { grid-template-columns: 1fr; }
+footer { padding: 16px 24px; flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+</style>
+
+</head>
+<body>
+
+<nav>
+  <div>
+    <div class="logo">PB<span>AI</span>R</div>
+    <div class="logo-sub">Permian Basin AI Research</div>
+  </div>
+  <div class="nav-contact">
+    Patrick Green &nbsp;·&nbsp; Midland, TX &nbsp;·&nbsp;
+    <a href="tel:3259984866">(325) 998-4866</a> &nbsp;·&nbsp;
+    <a href="mailto:PBIS.tx@gmail.com">PBIS.tx@gmail.com</a>
+  </div>
+</nav>
+
+<main>
+
+  <div class="eyebrow">Permian Basin Operations Study</div>
+
+  <div class="context">
+    <p>We're conducting structured research across local businesses to find where AI could make a meaningful difference in how operations actually run.</p>
+    <span class="note">Two surveys. No pitch. No obligation. Your responses go toward research — not a sales conversation.</span>
+  </div>
+
+  <hr class="divider">
+
+  <div class="survey-cards">
+    <a class="survey-card" href="https://pbair-tx.github.io/pbair-management-survey.html">
+      <div class="card-label">Owners & Managers</div>
+      <div class="card-title">Operations Survey</div>
+      <div class="card-desc">How does work flow through your business and where does it slow down or break?</div>
+      <div class="card-footer">
+        <span class="card-time">~8 minutes</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+    <a class="survey-card" href="https://pbair-tx.github.io/pbair-employee-survey.html">
+      <div class="card-label">Employees — Fully Anonymous</div>
+      <div class="card-title">Workplace Survey</div>
+      <div class="card-desc">What's the daily reality on the ground? Your responses cannot be traced back to you.</div>
+      <div class="card-footer">
+        <span class="card-time">~5 minutes</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="closing">
+    After your survey is reviewed, we'll share a summary of what we found in your operation. If patterns emerge across businesses in your industry, we'll reach out — only if you indicated that's welcome, and only when we have something genuinely useful to share.
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-brand">PB<span>AI</span>R &nbsp;·&nbsp; Midland, Texas</div>
+  <div class="footer-contact">
+    Patrick Green &nbsp;·&nbsp;
+    <a href="tel:3259984866">(325) 998-4866</a> &nbsp;·&nbsp;
+    <a href="mailto:PBIS.tx@gmail.com">PBIS.tx@gmail.com</a>
+  </div>
+</footer>
+
+</body>
+</html>
